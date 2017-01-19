@@ -51,9 +51,8 @@ export class Filter extends Component {
 
 
     render() {
-
         const pageLoading = this.state.pageLoading;
-        const bodyHeight = {height: '500px'};
+        
         return (
             <div className="pizza-container">
             {
