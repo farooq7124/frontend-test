@@ -16,7 +16,8 @@ describe('<Filter /> Component', () => {
                 "3 cheeSe",
                 "macaroni",
                 "Chicken",
-                "Sausage and Pepperoni"]
+                "Sausage and Pepperoni"],
+            pageLoading: false
         };
         renderedFilter = shallow(<Filter {...testProps.pizza}/>);
     });
@@ -31,8 +32,8 @@ describe('<Filter /> Component', () => {
     });
 
     it('should have pizza list', function () {
-        renderedFilter.setState({pizzaList: testProps.pizza});
-        expect(renderedFilter.props().children[2].props.children[0].props.children).to.equal(testProps.pizza[0]);
+        renderedFilter.setState({pizzaList: testProps.pizza,pageLoading: false});
+        expect(renderedFilter.props().children.props.children[2].props.children[0].props.children).to.equal(testProps.pizza[0]);
     });
 
 
@@ -41,7 +42,8 @@ describe('<Filter /> Component', () => {
         let formElement;
 
         beforeEach(function () {
-            formElement = renderedFilter.props().children;
+            renderedFilter.setState({pageLoading: false});
+            formElement = renderedFilter.props().children.props.children;
         });
 
         describe('fiter list', function () {

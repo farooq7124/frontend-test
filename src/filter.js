@@ -5,20 +5,19 @@ import {getPizzas} from './services/pizzaService';
 function getPizzaList() {
     return getPizzas()
         .then(function (response) {
-            self.setState({pizzaList: response.pizzas,masterPizzaList: response.pizzas});
+            self.setState({pizzaList: response.pizzas,masterPizzaList: response.pizzas, pageLoading: !(response.pizzas.length)});
         });
 }
 
-function getFilteredData(pizzaList, ev) {
-    return pizzaList.filter(function (item) {
-        return item.toLowerCase().includes(ev.target.value);
+function filterListData(pizzaList, event) {
+    return pizzaList.filter(function (element) {
+       return element.indexOf(event.target.value) > -1;
     });
 }
 
 function sortAndReverse(list,order) {
     list.sort();
     !order ? list.reverse() : list;
-    //self.state.ascDefault = !order;
     return list;
 }
 
@@ -29,26 +28,20 @@ export class Filter extends Component {
         this.state = {
             pizzaList: [],
             masterPizzaList : [],
-            ascDefault: true
+            ascDefault: true,
+            pageLoading: true
         };
     }
 
     componentDidMount() {
         self = this;
-        global.setTimeout(
-            function(){
-                getPizzaList();
-
-            },
-            1000
-        );
+        getPizzaList();
     }
 
-    filterData(ev) {
+    filterData(event) {
         this.state.pizzaList = this.state.masterPizzaList;
-        const updatedFilteredList = getFilteredData(this.state.pizzaList, ev);
-        this.setState({pizzaList: sortAndReverse(getFilteredData(this.state.pizzaList, ev),this.state.ascDefault)});
-
+        const updatedFilteredList = filterListData(this.state.pizzaList, event);
+        this.setState({pizzaList: updatedFilteredList});
     }
 
     sortData() {
@@ -59,30 +52,37 @@ export class Filter extends Component {
 
     render() {
 
-        const containerHeight = {height: '600px'};
+        const pageLoading = this.state.pageLoading;
         const bodyHeight = {height: '500px'};
         return (
             <div className="pizza-container">
-                <input
-                    type="text"
-                    className="form-control"
-                    onKeyUp={this.filterData.bind(this)}
-                />
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={this.sortData.bind(this)}
-                >
-                    sort
-                </button>
-                <ul>
-                    {
-                        this.state.pizzaList.map(function(item, index) {
-                            return (<li key={index}>{item}</li>)
-                        })
-                    }
-                </ul>
+            {
+                pageLoading ?
+                        <h3>Loading</h3> :
+                        <div>
+                            <input
+                                type="text"
+                                className="form-control"
+                                onKeyUp={this.filterData.bind(this)}
+                            />
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={this.sortData.bind(this)}
+                            >
+                                sort
+                            </button>
+                            <ul>
+                                {
+                                    this.state.pizzaList.map(function(item, index) {
+                                        return (<li key={index}>{item}</li>)
+                                    })
+                                }
+                            </ul>
+                        </div>
+            }
             </div>
+
         );
     }
 }
